@@ -1,0 +1,43 @@
+import pytest
+import time
+import os
+
+from conftest import *
+from cdishelper.selenium_helper import Selenium_Helper
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+from element_repository import HomePage, DataManager, Seismic
+from basepage import BasePage
+
+@pytest.mark.usefixtures("browser_setup")
+class Test_BasicUI(Selenium_Helper):
+
+    def setup_class(self):
+        self.driver.get(CDISUrl)
+
+    def test_basicui(self):
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        screenshot_folder = os.path.join(base_dir, 'screenshot/BasicUI')
+
+        username = "Goradawala"
+        project = "Auger_new"
+
+        home_page = HomePage(self.driver)
+        data_manager = DataManager(self.driver)
+        self.base_page = BasePage(self.driver)
+
+        # Verify Home Page
+        start_button = WebDriverWait(self.driver, 10).until(
+            EC.visibility_of_element_located(home_page.start_button)
+        )
+        start_button.click()
+
+        # Select User
+        self.base_page.select_user(username)
+
+        # Select Project
+        self.base_page.select_project(project)
+
+        # Create Model
+        self.base_page.create_dataflow_model('Selenium Basic UI Test')
