@@ -1,6 +1,7 @@
 import pytest
 import time
 import os
+import requests
 
 from conftest import *
 from cdishelper.selenium_helper import Selenium_Helper
@@ -10,11 +11,48 @@ from selenium.webdriver.support import expected_conditions as EC
 from element_repository import HomePage, DataManager, Seismic
 from basepage import BasePage
 
+
 @pytest.mark.usefixtures("browser_setup")
 class Test_BasicUI(Selenium_Helper):
 
     def setup_class(self):
         self.driver.get(CDISUrl)
+
+    def call_claude_prompt_api(self, prompt):
+        """
+        Calls Claude Opus prompt API to generate AI-assisted test insights.
+        API key should be stored as an environment variable:
+        ANTHROPIC_API_KEY
+        """
+
+        api_key = os.getenv("ANTHROPIC_API_KEY")
+
+        if not api_key:
+            raise EnvironmentError("ANTHROPIC_API_KEY is not set")
+
+        url = "https://api.anthropic.com/v1/messages"
+
+        headers = {
+            "x-api-key": api_key,
+            "anthropic-version": "2023-06-01",
+            "content-type": "application/json"
+        }
+
+        payload = {
+            "model": "claude-opus-4-1-20250805",
+            "max_tokens": 500,
+            "messages": [
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ]
+        }
+
+        response = requests.post(url, headers=headers, json=payload, timeout=30)
+        response.raise_for_status()
+
+        return response.json()["content"][0]["text"]
 
     def test_basicui(self):
         base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -26,6 +64,21 @@ class Test_BasicUI(Selenium_Helper):
         home_page = HomePage(self.driver)
         data_manager = DataManager(self.driver)
         self.base_page = BasePage(self.driver)
+
+        # AI-assisted test context generation using Claude Opus
+        ai_prompt = """
+        Generate key validation points for a Selenium UI automation test that:
+        1. Opens an enterprise application
+        2. Selects a user
+        3. Selects a project
+        4. Creates a DataFlow model
+
+        Focus on UI validation, edge cases, and automation reliability.
+        """
+
+        claude_response = self.call_claude_prompt_api(ai_prompt)
+        print("Claude Opus AI Test Insights:")
+        print(claude_response)
 
         # Verify Home Page
         start_button = WebDriverWait(self.driver, 10).until(
