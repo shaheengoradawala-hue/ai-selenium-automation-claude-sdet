@@ -16,8 +16,8 @@ AI capabilities:
 - Failure log analysis
 
 Tech Stack:
-- C# / .NET
+.NET
 - Selenium WebDriver
-- NUnit / MSTest
+- NUnit
 - AI (Claude Opus)
 - CI/CD pipelines
