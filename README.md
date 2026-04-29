@@ -1,7 +1,7 @@
 # ai-selenium-automation-claude-sdet
 Selenium + CI/CD + Claude AI usage
 
-AI-assisted Selenium automation framework (POM + CI/CD) built to demonstrate and experiment with Claude Opus for test case generation, edge-case discovery, automation script support, and log analysis. This project showcases how GenAI can be integrated into real-world SDET workflows to enhance test design, coverage, and debugging efficiency.
+I integrated Claude Opus into my Selenium framework to dynamically generate validation points and edge cases during test execution. This helps move from static automation to AI-assisted testing, improving coverage and identifying gaps early—especially useful for complex UI workflows.
 
 This framework demonstrates:
 - Selenium WebDriver automation using Page Object Model (POM)
